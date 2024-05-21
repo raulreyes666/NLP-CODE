@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        canvas {
+            
+            margin: auto;  
+            max-width: 500px;
+            max-height: 500px;
+            width: 100% !important;
+            height: auto !important;
+        }
+        .titulo{
+            font-size: larger;
+            font: bold;
+        
+        }
+        
+        .divLoco{
+          
+            padding:20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="divLoco">
+        <label for="textarea" class="titulo">Introduce una cadena de palabras.</label><br>
+    <textarea id="textInput" placeholder="Ingrese un texto"></textarea><br>
+    <button onclick="generateRadarChart()">Generar Radar Chart</button>
+    <button onclick="reloadPage()">Recargar</button>
+</div>
+    <canvas id="marksCanvas" ></canvas>
+
+    <script>
+        function generateRadarChart() {
+            var textInput = document.getElementById("textInput").value;
+            var words = tokenizeText(textInput);
+            var topWords = getTopWords(words, 10);
+
+            // Create the radar chart
+            var radarChart = new Chart("marksCanvas", {
+                type: 'radar',
+                data: {
+                    labels: topWords.map(word => word.label),
+                    datasets: [{
+                        label: "Frecuencia",
+                        backgroundColor: "rgba(15, 186, 18, 0.2)",
+                        data: topWords.map(word => word.frequency)
+                    }]
+                }
+            });
+
+            // Set canvas width and height to 150
+            var canvas = document.getElementById("marksCanvas");
+            canvas.width = 500;
+            canvas.height = 500;
+        }
+
+        function tokenizeText(text) {
+            // Simple tokenization using whitespace as a delimiter
+            return text.toLowerCase().split(/\s+/);
+        }
+
+        function getTopWords(words, count) {
+            var wordCount = {};
+            words.forEach(function (word) {
+                if (wordCount[word]) {
+                    wordCount[word]++;
+                } else {
+                    wordCount[word] = 1;
+                }
+            });
+
+            var sortedWords = Object.keys(wordCount).sort(function (a, b) {
+                return wordCount[b] - wordCount[a];
+            });
+
+            return sortedWords.slice(0, count).map(function (word) {
+                return { label: word, frequency: wordCount[word] };
+            });
+
+            
+        }
+
+        function reloadPage(){
+            location.reload()
+        }
+
+
+        </script>
+       
+</body>
+</html>
